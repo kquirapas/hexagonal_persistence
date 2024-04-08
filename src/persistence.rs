@@ -17,6 +17,8 @@ pub trait PersistenceAdapter {
 
 impl PersistenceAdapter for PostgresPersistence {
     async fn create_book(&self, book: Book) -> Result<Book> {
+        sqlx::migrate!().run(&self.pool).await?;
+
         let query = "INSERT INTO book (title, author, isbn) VALUES ($1, $2, $3)";
 
         sqlx::query(query)
